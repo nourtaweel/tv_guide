@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.techpearl.tvguide.databinding.ActivityMainBinding;
@@ -36,7 +39,21 @@ public class MainActivity extends AppCompatActivity {
         new TVMazeAsyncTask().execute(mURL);
 
     }
+    private void showResponse(String response){
+        mBinding.errorTextView.setVisibility(View.INVISIBLE);
+        mBinding.responseTextView.setVisibility(View.VISIBLE);
+        mBinding.responseTextView.setText(response);
+    }
+    private void showErrorMessage(){
+        mBinding.responseTextView.setVisibility(View.INVISIBLE);
+        mBinding.errorTextView.setVisibility(View.VISIBLE);
+    }
     private class TVMazeAsyncTask extends AsyncTask<URL, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            mBinding.progressBar.setVisibility(View.VISIBLE);
+        }
 
         @Override
         protected String doInBackground(URL... urls) {
@@ -52,8 +69,11 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            if(s != null && !s.isEmpty())
-                mBinding.responseTextView.setText(s);
+            mBinding.progressBar.setVisibility(View.INVISIBLE);
+            if( s == null || s.isEmpty() )
+                showErrorMessage();
+            else
+            showResponse(s);
         }
     }
 
