@@ -2,6 +2,7 @@ package com.techpearl.tvguide;
 
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,21 +11,50 @@ import android.widget.Toast;
 
 import com.techpearl.tvguide.databinding.ActivityMainBinding;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding mBinding;
-    private static final String PARAM_DATE = "date";
-    private static final String PARAM_COUNTRY = "country";
-    private static final String SCHEDULE_PATH = "schedule";
-    private static final String TV_MAZE_BASE_URL = "http://api.tvmaze.com";
+    URL mURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        mBinding.responseTextView.setText(buildURL().toString());
+        String date = "2018-01-09";
+        String countryCode = "GB";
+        mURL = NetworkUtils.buildURL(date, countryCode);
+        makeConnectionToApi();
+    }
+    private void makeConnectionToApi() {
+        new TVMazeAsyncTask().execute(mURL);
+
+    }
+    private class TVMazeAsyncTask extends AsyncTask<URL, Void, String> {
+
+        @Override
+        protected String doInBackground(URL... urls) {
+            URL tvMazeUrl = urls[0];
+            String response = null;
+            try{
+               response = NetworkUtils.makeConnection(tvMazeUrl);}
+            catch (IOException ioe){
+                ioe.printStackTrace();
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if(s != null && !s.isEmpty())
+                mBinding.responseTextView.setText(s);
+        }
     }
 
     @Override
@@ -41,22 +71,6 @@ public class MainActivity extends AppCompatActivity {
         }else
             return super.onOptionsItemSelected(item);
     }
-    private URL buildURL(){
 
-        String date = "2018-01-09";
-        String countryCode = "GB";
-        Uri builtUri = Uri.parse(TV_MAZE_BASE_URL).buildUpon()
-                .appendPath(SCHEDULE_PATH)
-                .appendQueryParameter(PARAM_COUNTRY, countryCode)
-                .appendQueryParameter(PARAM_DATE, date)
-                .build();
-        URL scheduleURL = null;
-        try {
-            scheduleURL = new URL(builtUri.toString());
-        }catch (MalformedURLException exp){
-            exp.printStackTrace();
-        }
-        return scheduleURL;
-    }
 }
 
