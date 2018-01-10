@@ -42,7 +42,10 @@ public class MainActivity extends AppCompatActivity {
     private void showResponse(String response){
         mBinding.errorTextView.setVisibility(View.INVISIBLE);
         mBinding.responseTextView.setVisibility(View.VISIBLE);
-        mBinding.responseTextView.setText(response);
+        String[] responseParsedArray = JSONUtils.parseScheduleResponse(response);
+        for(String episode : responseParsedArray)
+            mBinding.responseTextView.append(episode + "\n\n");
+       // mBinding.responseTextView.setText(response);
     }
     private void showErrorMessage(){
         mBinding.responseTextView.setVisibility(View.INVISIBLE);
