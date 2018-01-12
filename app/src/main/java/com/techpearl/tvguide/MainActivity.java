@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
         mAdapter = new EpisodesAdapter(this);
         mBinding.episodesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mBinding.episodesRecyclerView.setAdapter(mAdapter);
-        String date = "2018-01-09";
+        String date = "2018-01-12";
         String countryCode = "GB";
         mURL = NetworkUtils.buildURL(date, countryCode);
         makeConnectionToApi();
