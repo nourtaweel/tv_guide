@@ -49,7 +49,9 @@ public class JSONUtils {
                 String episodeShowNetworkId = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_ID);
                 String episodeShowNetworkName = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_NAME);
                 String episodeShowImage = episodeShow.getString(KEY_EPISODE_SHOW_IMAGE);
-                episodesArray[i] = episodeShowName + ":" + episodeName + " s" + episodeSeason
+                episodesArray[i] = episodeShowName
+                        + " " + episodeAirTime 
+                        + " s" + episodeSeason
                         + " ep " + episodeNumber;
             }
         } catch (JSONException jsonExp){

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,11 +26,16 @@ import java.util.Scanner;
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding mBinding;
     URL mURL;
+    String[] dataArray;
+    EpisodesAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        mAdapter = new EpisodesAdapter();
+        mBinding.episodesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mBinding.episodesRecyclerView.setAdapter(mAdapter);
         String date = "2018-01-09";
         String countryCode = "GB";
         mURL = NetworkUtils.buildURL(date, countryCode);
@@ -41,14 +47,16 @@ public class MainActivity extends AppCompatActivity {
     }
     private void showResponse(String response){
         mBinding.errorTextView.setVisibility(View.INVISIBLE);
-        mBinding.responseTextView.setVisibility(View.VISIBLE);
-        String[] responseParsedArray = JSONUtils.parseScheduleResponse(response);
-        for(String episode : responseParsedArray)
-            mBinding.responseTextView.append(episode + "\n\n");
+       // mBinding.responseTextView.setVisibility(View.VISIBLE);
+        dataArray = JSONUtils.parseScheduleResponse(response);
+        mAdapter.setData(dataArray);
+        //for(String episode : responseParsedArray){
+            // mBinding.responseTextView.append(episode + "\n\n");
+        //}
        // mBinding.responseTextView.setText(response);
     }
     private void showErrorMessage(){
-        mBinding.responseTextView.setVisibility(View.INVISIBLE);
+       // mBinding.responseTextView.setVisibility(View.INVISIBLE);
         mBinding.errorTextView.setVisibility(View.VISIBLE);
     }
     private class TVMazeAsyncTask extends AsyncTask<URL, Void, String> {
