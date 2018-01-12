@@ -45,10 +45,10 @@ public class JSONUtils {
                 String episodeShowId = episodeShow.getString(KEY_EPISODE_SHOW_ID);
                 String episodeShowName = episodeShow.getString(KEY_EPISODE_SHOW_NAME);
                 String episodeShowGenres = episodeShow.getString(KEY_EPISODE_SHOW_GENRES);
-                JSONObject episodeShowNetwork = episodeShow.getJSONObject(KEY_EPISODE_SHOW_NETWORK);
+               /* JSONObject episodeShowNetwork = episodeShow.getJSONObject(KEY_EPISODE_SHOW_NETWORK);
                 String episodeShowNetworkId = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_ID);
                 String episodeShowNetworkName = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_NAME);
-                String episodeShowImage = episodeShow.getString(KEY_EPISODE_SHOW_IMAGE);
+                String episodeShowImage = episodeShow.getString(KEY_EPISODE_SHOW_IMAGE);*/
                 episodesArray[i] = episodeShowName
                         + " " + episodeAirTime
                         + " s" + episodeSeason
