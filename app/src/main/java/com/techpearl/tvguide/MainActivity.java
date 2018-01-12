@@ -48,16 +48,12 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
     }
     private void showResponse(String response){
         mBinding.errorTextView.setVisibility(View.INVISIBLE);
-       // mBinding.responseTextView.setVisibility(View.VISIBLE);
+        mBinding.episodesRecyclerView.setVisibility(View.VISIBLE);
         dataArray = JSONUtils.parseScheduleResponse(response);
         mAdapter.setData(dataArray);
-        //for(String episode : responseParsedArray){
-            // mBinding.responseTextView.append(episode + "\n\n");
-        //}
-       // mBinding.responseTextView.setText(response);
     }
     private void showErrorMessage(){
-       // mBinding.responseTextView.setVisibility(View.INVISIBLE);
+        mBinding.episodesRecyclerView.setVisibility(View.INVISIBLE);
         mBinding.errorTextView.setVisibility(View.VISIBLE);
     }
 
