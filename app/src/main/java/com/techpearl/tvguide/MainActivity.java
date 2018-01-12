@@ -23,17 +23,18 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements EpisodesAdapter.ListItemClickListener{
     ActivityMainBinding mBinding;
     URL mURL;
     String[] dataArray;
     EpisodesAdapter mAdapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        mAdapter = new EpisodesAdapter();
+        mAdapter = new EpisodesAdapter(this);
         mBinding.episodesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mBinding.episodesRecyclerView.setAdapter(mAdapter);
         String date = "2018-01-09";
@@ -59,6 +60,12 @@ public class MainActivity extends AppCompatActivity {
        // mBinding.responseTextView.setVisibility(View.INVISIBLE);
         mBinding.errorTextView.setVisibility(View.VISIBLE);
     }
+
+    @Override
+    public void onItemClick(String itemData) {
+        Toast.makeText(this,itemData,Toast.LENGTH_SHORT).show();
+    }
+
     private class TVMazeAsyncTask extends AsyncTask<URL, Void, String> {
 
         @Override

@@ -14,6 +14,11 @@ import com.techpearl.tvguide.databinding.EpisodeRowLayoutBinding;
 
 public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.EpisodeViewHolder>{
     private String[] data;
+    private EpisodesAdapter.ListItemClickListener mListener;
+
+    public EpisodesAdapter(ListItemClickListener listener){
+        this.mListener = listener;
+    }
 
     public void setData(String[] data){
         this.data = data;
@@ -41,15 +46,24 @@ public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.Episod
             return 0;
         return data.length;
     }
-
-    class EpisodeViewHolder extends RecyclerView.ViewHolder{
+    public interface ListItemClickListener{
+        public void onItemClick(String itemData);
+    }
+    class EpisodeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         EpisodeRowLayoutBinding mBinder;
         public EpisodeViewHolder(EpisodeRowLayoutBinding binder) {
             super(binder.getRoot());
             mBinder = binder;
+            binder.getRoot().setOnClickListener(this);
         }
         public void bind(String episodeData){
             mBinder.nameTextView.setText(episodeData);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+            mListener.onItemClick(data[position]);
         }
     }
 }

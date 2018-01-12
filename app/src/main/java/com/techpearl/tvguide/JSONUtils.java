@@ -50,7 +50,7 @@ public class JSONUtils {
                 String episodeShowNetworkName = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_NAME);
                 String episodeShowImage = episodeShow.getString(KEY_EPISODE_SHOW_IMAGE);
                 episodesArray[i] = episodeShowName
-                        + " " + episodeAirTime 
+                        + " " + episodeAirTime
                         + " s" + episodeSeason
                         + " ep " + episodeNumber;
             }
