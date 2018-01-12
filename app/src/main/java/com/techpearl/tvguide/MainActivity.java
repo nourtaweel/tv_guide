@@ -1,5 +1,6 @@
 package com.techpearl.tvguide;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -59,7 +60,13 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
 
     @Override
     public void onItemClick(String itemData) {
-        Toast.makeText(this,itemData,Toast.LENGTH_SHORT).show();
+        openDetails(itemData);
+    }
+
+    private void openDetails(String itemData) {
+        Intent detailsIntent = new Intent(MainActivity.this, EpisodeDetailsActivity.class);
+        detailsIntent.putExtra(Intent.EXTRA_TEXT, itemData);
+        startActivity(detailsIntent);
     }
 
     private class TVMazeAsyncTask extends AsyncTask<URL, Void, String> {
