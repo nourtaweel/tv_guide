@@ -1,34 +1,34 @@
 package com.techpearl.tvguide;
 
+import android.app.LoaderManager;
+import android.content.AsyncTaskLoader;
+import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.techpearl.tvguide.databinding.ActivityMainBinding;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.Scanner;
 
-public class MainActivity extends AppCompatActivity implements EpisodesAdapter.ListItemClickListener{
+public class MainActivity extends AppCompatActivity implements EpisodesAdapter.ListItemClickListener
+,LoaderManager.LoaderCallbacks<String>{
     ActivityMainBinding mBinding;
-    URL mURL;
     String[] dataArray;
     EpisodesAdapter mAdapter;
+    private static final int SCHEDULE_LOADER_ID = 100;
+    private static final String DATE_LOADER_EXTRA = "date";
+    private static final String COUNTRY_CODE_LOADER_EXTRA = "country";
+    private static final String TAG = MainActivity.class.getSimpleName();
 
 
     @Override
@@ -38,14 +38,16 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
         mAdapter = new EpisodesAdapter(this);
         mBinding.episodesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mBinding.episodesRecyclerView.setAdapter(mAdapter);
-        String date = "2018-01-12";
-        String countryCode = "GB";
-        mURL = NetworkUtils.buildURL(date, countryCode);
         makeConnectionToApi();
     }
     private void makeConnectionToApi() {
-        new TVMazeAsyncTask().execute(mURL);
-
+        String date = "2018-01-12";
+        String countryCode = "GB";
+        Bundle b = new Bundle();
+        b.putString(DATE_LOADER_EXTRA, date);
+        b.putString(COUNTRY_CODE_LOADER_EXTRA, countryCode);
+        getLoaderManager().initLoader(SCHEDULE_LOADER_ID, b, MainActivity.this);
+       // getLoaderManager().getLoader(SCHEDULE_LOADER_ID).forceLoad();
     }
     private void showResponse(String response){
         mBinding.errorTextView.setVisibility(View.INVISIBLE);
@@ -69,19 +71,46 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
         startActivity(detailsIntent);
     }
 
-    private class TVMazeAsyncTask extends AsyncTask<URL, Void, String> {
 
-        @Override
-        protected void onPreExecute() {
-            mBinding.progressBar.setVisibility(View.VISIBLE);
+    @Override
+    public Loader<String> onCreateLoader(int i, final Bundle bundle) {
+        //TODO : check what to do if bundle is null
+        String date = bundle.getString(DATE_LOADER_EXTRA);
+        String country = bundle.getString(COUNTRY_CODE_LOADER_EXTRA);
+        URL tvMazeUrl = NetworkUtils.buildURL(date, country);
+        return new ScheduleLoader(this, tvMazeUrl);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<String> loader, String s) {
+        Log.d(TAG, "onLoadFinished()");
+        mBinding.progressBar.setVisibility(View.INVISIBLE);
+        if( s == null || s.isEmpty() )
+            showErrorMessage();
+        else
+            showResponse(s);
+    }
+
+
+    @Override
+    public void onLoaderReset(Loader<String> loader) {
+
+    }
+
+    private static class ScheduleLoader extends AsyncTaskLoader<String> {
+        private String mData;
+        private URL mUrl;
+        ScheduleLoader(Context context, URL url) {
+            super(context);
+            mUrl = url;
         }
 
         @Override
-        protected String doInBackground(URL... urls) {
-            URL tvMazeUrl = urls[0];
+        public String loadInBackground() {
+            Log.d(TAG, "loadInBackground()");
             String response = null;
             try{
-               response = NetworkUtils.makeConnection(tvMazeUrl);}
+                response = NetworkUtils.makeConnection(mUrl);}
             catch (IOException ioe){
                 ioe.printStackTrace();
             }
@@ -89,15 +118,22 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            mBinding.progressBar.setVisibility(View.INVISIBLE);
-            if( s == null || s.isEmpty() )
-                showErrorMessage();
-            else
-            showResponse(s);
+        public void deliverResult(String data) {
+            Log.d(TAG, "deliverResult()");
+            mData = data;
+            super.deliverResult(data);
+        }
+
+        @Override
+        protected void onStartLoading() {
+            if(mData !=  null){
+                Log.d(TAG, "onStartLoading() and have cached data -> deliver");
+                deliverResult(mData);}
+            else{
+                Log.d(TAG, "onStartLoading() and no cached data -> forceLoad()");
+                forceLoad();}
         }
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
