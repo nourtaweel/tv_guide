@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:key="@string/pref_country_code_key"
+        android:entries="@array/country_codes_entries"
+        android:entryValues="@array/country_codes_values"
+        android:defaultValue="GB"
+        android:title="@string/pref_country_title"/>
+</PreferenceScreen>

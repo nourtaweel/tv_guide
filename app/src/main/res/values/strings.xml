@@ -2,4 +2,9 @@
     <string name="app_name">TVGuide</string>
     <string name="settings_menu_item">settings</string>
     <string name="error_message">Something went wrong with the connection.</string>
+    <string name="pref_country_title">country</string>
+    <string name="pref_country_code_key">countryCode</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
