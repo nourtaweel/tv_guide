@@ -142,8 +142,9 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_search){
-            Toast.makeText(this, "test menu", Toast.LENGTH_SHORT).show();
+        if(item.getItemId() == R.id.action_settings){
+            Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(settingsIntent);
             return true;
         }else
             return super.onOptionsItemSelected(item);

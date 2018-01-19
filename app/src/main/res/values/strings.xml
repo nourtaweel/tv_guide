@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">TVGuide</string>
-    <string name="search_menu_item">search</string>
+    <string name="settings_menu_item">settings</string>
     <string name="error_message">Something went wrong with the connection.</string>
 </resources>
