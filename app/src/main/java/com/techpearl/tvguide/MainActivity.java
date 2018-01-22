@@ -5,8 +5,10 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -21,7 +23,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements EpisodesAdapter.ListItemClickListener
-,LoaderManager.LoaderCallbacks<String>{
+,LoaderManager.LoaderCallbacks<String>,SharedPreferences.OnSharedPreferenceChangeListener{
     ActivityMainBinding mBinding;
     String[] dataArray;
     EpisodesAdapter mAdapter;
@@ -38,11 +40,18 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
         mAdapter = new EpisodesAdapter(this);
         mBinding.episodesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mBinding.episodesRecyclerView.setAdapter(mAdapter);
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .registerOnSharedPreferenceChangeListener(this);
         makeConnectionToApi();
     }
     private void makeConnectionToApi() {
-        String date = "2018-01-12";
-        String countryCode = "GB";
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String countryCodePreferenceKey = getResources().getString(R.string.pref_country_code_key);
+        String defaultCountryCode = getResources().getString(R.string.pref_country_code_default);
+        String countryCode = sharedPreferences.getString(countryCodePreferenceKey, defaultCountryCode);
+        Log.d(TAG, countryCode);
+        String date = "2018-01-19";
+
         Bundle b = new Bundle();
         b.putString(DATE_LOADER_EXTRA, date);
         b.putString(COUNTRY_CODE_LOADER_EXTRA, countryCode);
@@ -95,6 +104,19 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
     @Override
     public void onLoaderReset(Loader<String> loader) {
 
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        String countryCodeKey = getResources().getString(R.string.pref_country_code_key);
+        if(key.equals(countryCodeKey)){
+            String newCountryCode = sharedPreferences.getString(countryCodeKey,
+                    getResources().getString(R.string.pref_country_code_default));
+            Bundle b = new Bundle();
+            b.putString(DATE_LOADER_EXTRA, "2018-01-19");
+            b.putString(COUNTRY_CODE_LOADER_EXTRA, newCountryCode);
+            getLoaderManager().restartLoader(SCHEDULE_LOADER_ID, b, MainActivity.this);
+        }
     }
 
     private static class ScheduleLoader extends AsyncTaskLoader<String> {
@@ -150,5 +172,11 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
             return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
 }
 

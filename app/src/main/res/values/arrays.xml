@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="country_codes_values">
-        <item>GB</item>
-        <item>US</item>
+        <item>@string/pref_country_GB_value</item>
+        <item>@string/pref_country_US_value</item>
     </string-array>
     <string-array name="country_codes_entries">
-        <item>United Kingdom</item>
-        <item>US</item>
+        <item>@string/pref_country_GB_name</item>
+        <item>@string/pref_country_US_name</item>
     </string-array>
 </resources>
