@@ -1,5 +1,6 @@
 package com.techpearl.tvguide.data;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
@@ -7,9 +8,16 @@ import android.provider.BaseColumns;
  */
 
 public final class ScheduleContract {
+    public static final String AUTHORITY = "com.techpearl.tvguide";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+    public static final String PATH_SCHEDULE = "schedule";
     private ScheduleContract(){}
 
     public static class ScheduleEntry implements BaseColumns{
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI
+                .buildUpon()
+                .appendPath(PATH_SCHEDULE)
+                .build();
         public static final String TABLE_NAME = "schedule";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_SEASON = "season";

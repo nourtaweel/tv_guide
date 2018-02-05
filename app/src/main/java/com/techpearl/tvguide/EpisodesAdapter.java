@@ -1,11 +1,13 @@
 package com.techpearl.tvguide;
 
+import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.techpearl.tvguide.data.ScheduleContract;
 import com.techpearl.tvguide.databinding.EpisodeRowLayoutBinding;
 
 /**
@@ -13,14 +15,14 @@ import com.techpearl.tvguide.databinding.EpisodeRowLayoutBinding;
  */
 
 public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.EpisodeViewHolder>{
-    private String[] data;
+    private Cursor data;
     private EpisodesAdapter.ListItemClickListener mListener;
 
     public EpisodesAdapter(ListItemClickListener listener){
         this.mListener = listener;
     }
 
-    public void setData(String[] data){
+    public void swapCursor(Cursor data){
         this.data = data;
         notifyDataSetChanged();
     }
@@ -36,15 +38,15 @@ public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.Episod
 
     @Override
     public void onBindViewHolder(EpisodeViewHolder holder, int position) {
-        String episodeString = data[position];
-        holder.bind(episodeString);
+        data.moveToPosition(position);
+        holder.bind(data);
     }
 
     @Override
     public int getItemCount() {
         if(data == null)
             return 0;
-        return data.length;
+        return data.getCount();
     }
     public interface ListItemClickListener{
         public void onItemClick(String itemData);
@@ -56,14 +58,24 @@ public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.Episod
             mBinder = binder;
             binder.getRoot().setOnClickListener(this);
         }
-        public void bind(String episodeData){
-            mBinder.nameTextView.setText(episodeData);
+        public void bind(Cursor episodeData){
+            String name = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_NAME));
+            String season = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_SEASON));
+            String number = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_NUMBER));
+            String airTime = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_AIR_TIME));
+            String runTime = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_RUN_TIME));
+            String image = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_IMAGE));
+
+            mBinder.nameTextView.setText(name);
+            mBinder.numberTextView.setText(number);
+            mBinder.timeTextView.setText(airTime);
         }
 
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
-            mListener.onItemClick(data[position]);
+            data.moveToPosition(position);
+            mListener.onItemClick(data.toString());
         }
     }
 }

@@ -11,6 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <provider
+            android:authorities="com.techpearl.tvguide"
+            android:name=".data.ScheduleContentProvider"
+            android:exported="false"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop">
@@ -33,6 +37,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-    </application>
 
+    </application>
 </manifest>

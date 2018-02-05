@@ -3,9 +3,11 @@ package com.techpearl.tvguide;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,15 +19,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.techpearl.tvguide.data.ScheduleContract;
 import com.techpearl.tvguide.databinding.ActivityMainBinding;
 
 import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements EpisodesAdapter.ListItemClickListener
-,LoaderManager.LoaderCallbacks<String>,SharedPreferences.OnSharedPreferenceChangeListener{
+,LoaderManager.LoaderCallbacks<Cursor>,SharedPreferences.OnSharedPreferenceChangeListener{
     ActivityMainBinding mBinding;
-    String[] dataArray;
     EpisodesAdapter mAdapter;
     private static final int SCHEDULE_LOADER_ID = 100;
     private static final String DATE_LOADER_EXTRA = "date";
@@ -58,11 +60,12 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
         getLoaderManager().initLoader(SCHEDULE_LOADER_ID, b, MainActivity.this);
        // getLoaderManager().getLoader(SCHEDULE_LOADER_ID).forceLoad();
     }
-    private void showResponse(String response){
+    private void showResponse(Cursor response){
         mBinding.errorTextView.setVisibility(View.INVISIBLE);
         mBinding.episodesRecyclerView.setVisibility(View.VISIBLE);
-        dataArray = JSONUtils.parseScheduleResponse(response);
-        mAdapter.setData(dataArray);
+        //dataArray = JSONUtils.parseScheduleResponse(response);
+        //mAdapter.setData(dataArray);
+        mAdapter.swapCursor(response);
     }
     private void showErrorMessage(){
         mBinding.episodesRecyclerView.setVisibility(View.INVISIBLE);
@@ -82,28 +85,41 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
 
 
     @Override
-    public Loader<String> onCreateLoader(int i, final Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(int i, final Bundle bundle) {
         //TODO : check what to do if bundle is null
         String date = bundle.getString(DATE_LOADER_EXTRA);
         String country = bundle.getString(COUNTRY_CODE_LOADER_EXTRA);
         URL tvMazeUrl = NetworkUtils.buildURL(date, country);
-        return new ScheduleLoader(this, tvMazeUrl);
+        //return new ScheduleLoader(this, tvMazeUrl);
+        String[] projection = new String[]{ScheduleContract.ScheduleEntry._ID,
+                ScheduleContract.ScheduleEntry.COLUMN_NAME,
+                ScheduleContract.ScheduleEntry.COLUMN_SEASON,
+                ScheduleContract.ScheduleEntry.COLUMN_NUMBER,
+                ScheduleContract.ScheduleEntry.COLUMN_AIR_TIME,
+                ScheduleContract.ScheduleEntry.COLUMN_RUN_TIME,
+                ScheduleContract.ScheduleEntry.COLUMN_IMAGE};
+        return new CursorLoader(this,
+                ScheduleContract.ScheduleEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
     }
 
     @Override
-    public void onLoadFinished(Loader<String> loader, String s) {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         Log.d(TAG, "onLoadFinished()");
         mBinding.progressBar.setVisibility(View.INVISIBLE);
-        if( s == null || s.isEmpty() )
+        if( cursor == null || cursor.getCount() == 0 )
             showErrorMessage();
         else
-            showResponse(s);
+            showResponse(cursor);
     }
 
 
     @Override
-    public void onLoaderReset(Loader<String> loader) {
-
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.swapCursor(null);
     }
 
     @Override
