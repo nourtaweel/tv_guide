@@ -59,7 +59,8 @@ public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.Episod
             binder.getRoot().setOnClickListener(this);
         }
         public void bind(Cursor episodeData){
-            String name = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_NAME));
+            String name = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_SHOW_NAME));
+            String networkName = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_NETWORK_NAME));
             String season = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_SEASON));
             String number = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_NUMBER));
             String airTime = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_AIR_TIME));
@@ -67,6 +68,7 @@ public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.Episod
             String image = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_IMAGE));
 
             mBinder.nameTextView.setText(name);
+            mBinder.networkTextView.setText("\u2022" + networkName);
             mBinder.numberTextView.setText(number);
             mBinder.timeTextView.setText(airTime);
         }

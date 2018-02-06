@@ -1,6 +1,7 @@
 package com.techpearl.tvguide;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 import com.techpearl.tvguide.data.ScheduleContract;
 
@@ -46,13 +47,14 @@ public class JSONUtils {
                 episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_RUN_TIME, episode.getString(KEY_EPISODE_RUN_TIME));
                 episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_IMAGE, episode.getString(KEY_EPISODE_IMAGE));
                 episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_SUMMARY, episode.getString(KEY_EPISODE_SUMMARY));
-                /*JSONObject episodeShow = episode.getJSONObject(KEY_EPISODE_SHOW);
-                String episodeShowId = episodeShow.getString(KEY_EPISODE_SHOW_ID);
+                JSONObject episodeShow = episode.getJSONObject(KEY_EPISODE_SHOW);
                 String episodeShowName = episodeShow.getString(KEY_EPISODE_SHOW_NAME);
-                String episodeShowGenres = episodeShow.getString(KEY_EPISODE_SHOW_GENRES);
+                episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_SHOW_NAME, episodeShowName);
                 JSONObject episodeShowNetwork = episodeShow.getJSONObject(KEY_EPISODE_SHOW_NETWORK);
-                String episodeShowNetworkId = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_ID);
                 String episodeShowNetworkName = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_NAME);
+                episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_NETWORK_NAME, episodeShowNetworkName);
+                /*
+                String episodeShowNetworkId = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_ID);
                 String episodeShowImage = episodeShow.getString(KEY_EPISODE_SHOW_IMAGE);*/
             }
         } catch (JSONException jsonExp){

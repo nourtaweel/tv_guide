@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class ScheduleOpenHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "schedule.db";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 6;
     public ScheduleOpenHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -20,6 +20,8 @@ public class ScheduleOpenHelper extends SQLiteOpenHelper {
         String createStatement = "CREATE TABLE " + ScheduleContract.ScheduleEntry.TABLE_NAME
                 + " ( " + ScheduleContract.ScheduleEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + ScheduleContract.ScheduleEntry.COLUMN_EP_ID + " TEXT NOT NULL, "
+                + ScheduleContract.ScheduleEntry.COLUMN_SHOW_NAME + " TEXT NOT NULL, "
+                + ScheduleContract.ScheduleEntry.COLUMN_NETWORK_NAME + " TEXT NOT NULL, "
                 + ScheduleContract.ScheduleEntry.COLUMN_NAME + " TEXT NOT NULL, "
                 + ScheduleContract.ScheduleEntry.COLUMN_SEASON + " TEXT, "
                 + ScheduleContract.ScheduleEntry.COLUMN_NUMBER + " TEXT, "
