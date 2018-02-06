@@ -19,6 +19,7 @@ public final class ScheduleContract {
                 .appendPath(PATH_SCHEDULE)
                 .build();
         public static final String TABLE_NAME = "schedule";
+        public static final String COLUMN_EP_ID = "episode_id";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_SEASON = "season";
         public static final String COLUMN_NUMBER = "number";

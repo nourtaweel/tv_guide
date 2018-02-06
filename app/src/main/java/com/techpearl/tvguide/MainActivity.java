@@ -1,37 +1,27 @@
 package com.techpearl.tvguide;
 
-import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
-import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.techpearl.tvguide.data.ScheduleContract;
 import com.techpearl.tvguide.databinding.ActivityMainBinding;
-
-import java.io.IOException;
-import java.net.URL;
+import com.techpearl.tvguide.sync.TvGuideSyncUtils;
 
 public class MainActivity extends AppCompatActivity implements EpisodesAdapter.ListItemClickListener
-,LoaderManager.LoaderCallbacks<Cursor>,SharedPreferences.OnSharedPreferenceChangeListener{
+,LoaderManager.LoaderCallbacks<Cursor>{
     ActivityMainBinding mBinding;
     EpisodesAdapter mAdapter;
     private static final int SCHEDULE_LOADER_ID = 100;
-    private static final String DATE_LOADER_EXTRA = "date";
-    private static final String COUNTRY_CODE_LOADER_EXTRA = "country";
     private static final String TAG = MainActivity.class.getSimpleName();
 
 
@@ -42,34 +32,21 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
         mAdapter = new EpisodesAdapter(this);
         mBinding.episodesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mBinding.episodesRecyclerView.setAdapter(mAdapter);
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .registerOnSharedPreferenceChangeListener(this);
-        makeConnectionToApi();
-    }
-    private void makeConnectionToApi() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String countryCodePreferenceKey = getResources().getString(R.string.pref_country_code_key);
-        String defaultCountryCode = getResources().getString(R.string.pref_country_code_default);
-        String countryCode = sharedPreferences.getString(countryCodePreferenceKey, defaultCountryCode);
-        Log.d(TAG, countryCode);
-        String date = "2018-01-19";
-
-        Bundle b = new Bundle();
-        b.putString(DATE_LOADER_EXTRA, date);
-        b.putString(COUNTRY_CODE_LOADER_EXTRA, countryCode);
-        getLoaderManager().initLoader(SCHEDULE_LOADER_ID, b, MainActivity.this);
-       // getLoaderManager().getLoader(SCHEDULE_LOADER_ID).forceLoad();
+        TvGuideSyncUtils.startImmediateSync(this);
+        showLoadingIndicator(true);
+        getSupportLoaderManager().initLoader(SCHEDULE_LOADER_ID, null, this);
     }
     private void showResponse(Cursor response){
         mBinding.errorTextView.setVisibility(View.INVISIBLE);
         mBinding.episodesRecyclerView.setVisibility(View.VISIBLE);
-        //dataArray = JSONUtils.parseScheduleResponse(response);
-        //mAdapter.setData(dataArray);
         mAdapter.swapCursor(response);
     }
     private void showErrorMessage(){
         mBinding.episodesRecyclerView.setVisibility(View.INVISIBLE);
         mBinding.errorTextView.setVisibility(View.VISIBLE);
+    }
+    private void showLoadingIndicator(boolean show){
+        mBinding.progressBar.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -83,15 +60,10 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
         startActivity(detailsIntent);
     }
 
-
     @Override
     public Loader<Cursor> onCreateLoader(int i, final Bundle bundle) {
-        //TODO : check what to do if bundle is null
-        String date = bundle.getString(DATE_LOADER_EXTRA);
-        String country = bundle.getString(COUNTRY_CODE_LOADER_EXTRA);
-        URL tvMazeUrl = NetworkUtils.buildURL(date, country);
-        //return new ScheduleLoader(this, tvMazeUrl);
         String[] projection = new String[]{ScheduleContract.ScheduleEntry._ID,
+                ScheduleContract.ScheduleEntry.COLUMN_EP_ID,
                 ScheduleContract.ScheduleEntry.COLUMN_NAME,
                 ScheduleContract.ScheduleEntry.COLUMN_SEASON,
                 ScheduleContract.ScheduleEntry.COLUMN_NUMBER,
@@ -108,8 +80,7 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        Log.d(TAG, "onLoadFinished()");
-        mBinding.progressBar.setVisibility(View.INVISIBLE);
+        showLoadingIndicator(false);
         if( cursor == null || cursor.getCount() == 0 )
             showErrorMessage();
         else
@@ -120,57 +91,6 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mAdapter.swapCursor(null);
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        String countryCodeKey = getResources().getString(R.string.pref_country_code_key);
-        if(key.equals(countryCodeKey)){
-            String newCountryCode = sharedPreferences.getString(countryCodeKey,
-                    getResources().getString(R.string.pref_country_code_default));
-            Bundle b = new Bundle();
-            b.putString(DATE_LOADER_EXTRA, "2018-01-19");
-            b.putString(COUNTRY_CODE_LOADER_EXTRA, newCountryCode);
-            getLoaderManager().restartLoader(SCHEDULE_LOADER_ID, b, MainActivity.this);
-        }
-    }
-
-    private static class ScheduleLoader extends AsyncTaskLoader<String> {
-        private String mData;
-        private URL mUrl;
-        ScheduleLoader(Context context, URL url) {
-            super(context);
-            mUrl = url;
-        }
-
-        @Override
-        public String loadInBackground() {
-            Log.d(TAG, "loadInBackground()");
-            String response = null;
-            try{
-                response = NetworkUtils.makeConnection(mUrl);}
-            catch (IOException ioe){
-                ioe.printStackTrace();
-            }
-            return response;
-        }
-
-        @Override
-        public void deliverResult(String data) {
-            Log.d(TAG, "deliverResult()");
-            mData = data;
-            super.deliverResult(data);
-        }
-
-        @Override
-        protected void onStartLoading() {
-            if(mData !=  null){
-                Log.d(TAG, "onStartLoading() and have cached data -> deliver");
-                deliverResult(mData);}
-            else{
-                Log.d(TAG, "onStartLoading() and no cached data -> forceLoad()");
-                forceLoad();}
-        }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -186,13 +106,6 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
             return true;
         }else
             return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .unregisterOnSharedPreferenceChangeListener(this);
     }
 }
 

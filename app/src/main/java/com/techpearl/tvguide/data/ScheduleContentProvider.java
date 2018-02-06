@@ -100,6 +100,7 @@ public class ScheduleContentProvider extends ContentProvider {
         }
     }
 
+
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
@@ -113,8 +114,16 @@ public class ScheduleContentProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+        int match = sMatcher.match(uri);
+        switch (match){
+            case CODE_SCHEDULE:
+                SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+                return db.delete(ScheduleContract.ScheduleEntry.TABLE_NAME, selection, selectionArgs);
+            default:
+                throw new UnsupportedOperationException("deleting unsupported for uri " +
+                            uri.toString());
+        }
     }
 
     @Override

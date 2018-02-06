@@ -1,5 +1,9 @@
 package com.techpearl.tvguide;
 
+import android.content.ContentValues;
+
+import com.techpearl.tvguide.data.ScheduleContract;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,37 +30,34 @@ public class JSONUtils {
     private final static String KEY_EPISODE_SHOW_NETWORK_NAME = "name";
     private final static String KEY_EPISODE_SHOW_IMAGE = "image";
 
-    public static String[] parseScheduleResponse(String jsonResponse){
-        String[] episodesArray = null;
+    public static ContentValues[] parseScheduleResponse(String jsonResponse){
+        ContentValues[] episodesContentValuesArray = null;
         try{
             JSONArray reader = new JSONArray(jsonResponse);
-            episodesArray = new String[reader.length()];
+            episodesContentValuesArray = new ContentValues[reader.length()];
             for(int i = 0; i < reader.length() ; ++i){
                 JSONObject episode = reader.getJSONObject(i);
-                String episodeID = episode.getString(KEY_EPISODE_ID);
-                String episodeName = episode.getString(KEY_EPISODE_NAME);
-                String episodeSeason = episode.getString(KEY_EPISODE_SEASON);
-                String episodeNumber = episode.getString(KEY_EPISODE_NUM);
-                String episodeAirTime = episode.getString(KEY_EPISODE_AIR_TIME);
-                String episodeRunTime = episode.getString(KEY_EPISODE_RUN_TIME);
-                String episodeImage = episode.getString(KEY_EPISODE_IMAGE);
-                String episodeSummary = episode.getString(KEY_EPISODE_SUMMARY);
-                JSONObject episodeShow = episode.getJSONObject(KEY_EPISODE_SHOW);
+                ContentValues episodeContentValue = episodesContentValuesArray[i];
+                episodeContentValue.put(ScheduleContract.ScheduleEntry.COLUMN_EP_ID, episode.getString(KEY_EPISODE_ID));
+                episodeContentValue.put(ScheduleContract.ScheduleEntry.COLUMN_NAME, episode.getString(KEY_EPISODE_NAME));
+                episodeContentValue.put(ScheduleContract.ScheduleEntry.COLUMN_SEASON, episode.getString(KEY_EPISODE_SEASON));
+                episodeContentValue.put(ScheduleContract.ScheduleEntry.COLUMN_NUMBER, episode.getString(KEY_EPISODE_NUM));
+                episodeContentValue.put(ScheduleContract.ScheduleEntry.COLUMN_AIR_TIME, episode.getString(KEY_EPISODE_AIR_TIME));
+                episodeContentValue.put(ScheduleContract.ScheduleEntry.COLUMN_RUN_TIME, episode.getString(KEY_EPISODE_RUN_TIME));
+                episodeContentValue.put(ScheduleContract.ScheduleEntry.COLUMN_IMAGE, episode.getString(KEY_EPISODE_IMAGE));
+                episodeContentValue.put(ScheduleContract.ScheduleEntry.COLUMN_SUMMARY, episode.getString(KEY_EPISODE_SUMMARY));
+                /*JSONObject episodeShow = episode.getJSONObject(KEY_EPISODE_SHOW);
                 String episodeShowId = episodeShow.getString(KEY_EPISODE_SHOW_ID);
                 String episodeShowName = episodeShow.getString(KEY_EPISODE_SHOW_NAME);
                 String episodeShowGenres = episodeShow.getString(KEY_EPISODE_SHOW_GENRES);
-               /* JSONObject episodeShowNetwork = episodeShow.getJSONObject(KEY_EPISODE_SHOW_NETWORK);
+                JSONObject episodeShowNetwork = episodeShow.getJSONObject(KEY_EPISODE_SHOW_NETWORK);
                 String episodeShowNetworkId = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_ID);
                 String episodeShowNetworkName = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_NAME);
                 String episodeShowImage = episodeShow.getString(KEY_EPISODE_SHOW_IMAGE);*/
-                episodesArray[i] = episodeShowName
-                        + " " + episodeAirTime
-                        + " s" + episodeSeason
-                        + " ep " + episodeNumber;
             }
         } catch (JSONException jsonExp){
             jsonExp.printStackTrace();
         }
-        return episodesArray;
+        return episodesContentValuesArray;
     }
 }
