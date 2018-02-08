@@ -67,7 +67,6 @@ public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.Episod
             String airTime = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_AIR_TIME));
             String runTime = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_RUN_TIME));
             String image = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_IMAGE));
-            Log.d("Adapter", image);
             mBinder.nameTextView.setText(name);
             mBinder.networkTextView.setText("\u2022" + networkName);
             mBinder.numberTextView.setText(number);
