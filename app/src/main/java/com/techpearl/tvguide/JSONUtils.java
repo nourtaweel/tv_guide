@@ -45,17 +45,19 @@ public class JSONUtils {
                 episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_NUMBER, episode.getString(KEY_EPISODE_NUM));
                 episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_AIR_TIME, episode.getString(KEY_EPISODE_AIR_TIME));
                 episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_RUN_TIME, episode.getString(KEY_EPISODE_RUN_TIME));
-                episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_IMAGE, episode.getString(KEY_EPISODE_IMAGE));
+                //episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_IMAGE, episode.getString(KEY_EPISODE_IMAGE));
                 episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_SUMMARY, episode.getString(KEY_EPISODE_SUMMARY));
                 JSONObject episodeShow = episode.getJSONObject(KEY_EPISODE_SHOW);
                 String episodeShowName = episodeShow.getString(KEY_EPISODE_SHOW_NAME);
                 episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_SHOW_NAME, episodeShowName);
                 JSONObject episodeShowNetwork = episodeShow.getJSONObject(KEY_EPISODE_SHOW_NETWORK);
                 String episodeShowNetworkName = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_NAME);
+                String episodeShowImage = episodeShow.getJSONObject(KEY_EPISODE_SHOW_IMAGE).getString("medium");
                 episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_NETWORK_NAME, episodeShowNetworkName);
+                episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_IMAGE, episodeShowImage);
                 /*
                 String episodeShowNetworkId = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_ID);
-                String episodeShowImage = episodeShow.getString(KEY_EPISODE_SHOW_IMAGE);*/
+                */
             }
         } catch (JSONException jsonExp){
             jsonExp.printStackTrace();

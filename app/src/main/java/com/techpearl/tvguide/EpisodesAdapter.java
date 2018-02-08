@@ -3,6 +3,7 @@ package com.techpearl.tvguide;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,11 +67,14 @@ public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.Episod
             String airTime = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_AIR_TIME));
             String runTime = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_RUN_TIME));
             String image = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_IMAGE));
-
+            Log.d("Adapter", image);
             mBinder.nameTextView.setText(name);
             mBinder.networkTextView.setText("\u2022" + networkName);
             mBinder.numberTextView.setText(number);
             mBinder.timeTextView.setText(airTime);
+            GlideApp.with(mBinder.getRoot())
+                    .load(image)
+                    .into(mBinder.imageView);
         }
 
         @Override
