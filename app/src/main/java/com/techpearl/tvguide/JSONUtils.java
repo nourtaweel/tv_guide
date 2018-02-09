@@ -30,6 +30,8 @@ public class JSONUtils {
     private final static String KEY_EPISODE_SHOW_NETWORK_ID = "id";
     private final static String KEY_EPISODE_SHOW_NETWORK_NAME = "name";
     private final static String KEY_EPISODE_SHOW_IMAGE = "image";
+    private static final String KEY_EPISODE_SHOW_WEB_CHANNEL = "webChannel";
+    private static final String KEY_EPISODE_SHOW_WEB_CHANNEL_NAME = "name";
 
     public static ContentValues[] parseScheduleResponse(String jsonResponse){
         ContentValues[] episodesContentValuesArray = null;
@@ -50,14 +52,23 @@ public class JSONUtils {
                 JSONObject episodeShow = episode.getJSONObject(KEY_EPISODE_SHOW);
                 String episodeShowName = episodeShow.getString(KEY_EPISODE_SHOW_NAME);
                 episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_SHOW_NAME, episodeShowName);
-                JSONObject episodeShowNetwork = episodeShow.getJSONObject(KEY_EPISODE_SHOW_NETWORK);
-                String episodeShowNetworkName = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_NAME);
+                //Tv show
+                if(!episodeShow.getString(KEY_EPISODE_SHOW_NETWORK).equals("null")){
+                    JSONObject episodeShowNetwork = episodeShow.getJSONObject(KEY_EPISODE_SHOW_NETWORK);
+                    String episodeShowNetworkName = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_NAME);
+                    episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_NETWORK_NAME, episodeShowNetworkName);
+                }//Web show
+                else if(!episodeShow.getString(KEY_EPISODE_SHOW_WEB_CHANNEL).equals("null")){
+                    JSONObject episodeShowWebChannel = episodeShow.getJSONObject(KEY_EPISODE_SHOW_WEB_CHANNEL);
+                    String episodeShowWebChannelName = episodeShowWebChannel.getString(KEY_EPISODE_SHOW_WEB_CHANNEL_NAME);
+                    episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_NETWORK_NAME, episodeShowWebChannelName);
+                }
+                else{
+                    episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_NETWORK_NAME, "");
+                }
                 String episodeShowImage = episodeShow.getJSONObject(KEY_EPISODE_SHOW_IMAGE).getString("medium");
-                episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_NETWORK_NAME, episodeShowNetworkName);
                 episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_IMAGE, episodeShowImage);
-                /*
-                String episodeShowNetworkId = episodeShowNetwork.getString(KEY_EPISODE_SHOW_NETWORK_ID);
-                */
+
             }
         } catch (JSONException jsonExp){
             jsonExp.printStackTrace();
