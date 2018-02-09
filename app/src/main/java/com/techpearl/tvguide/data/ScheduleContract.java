@@ -29,5 +29,8 @@ public final class ScheduleContract {
         public static final String COLUMN_SUMMARY = "summary";
         public static final String COLUMN_SHOW_NAME = "show_name";
         public static final String COLUMN_NETWORK_NAME = "network";
+        public static Uri getUriWithId(String id){
+            return CONTENT_URI.buildUpon().appendPath(id).build();
+        }
     }
 }

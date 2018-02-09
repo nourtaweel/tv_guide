@@ -38,7 +38,7 @@ public class ScheduleContentProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
         int match = sMatcher.match(uri);
         Cursor retCursor;
         switch (match){
@@ -58,8 +58,8 @@ public class ScheduleContentProvider extends ContentProvider {
                 String id = uri.getPathSegments().get(1);
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         ScheduleContract.ScheduleEntry.TABLE_NAME,
-                        null,
-                        ScheduleContract.ScheduleEntry._ID + "?",
+                        projection,
+                        ScheduleContract.ScheduleEntry._ID + " = ?",
                         new String[]{id},
                         null,
                         null,

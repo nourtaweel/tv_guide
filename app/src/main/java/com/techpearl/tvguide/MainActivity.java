@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity implements EpisodesAdapter.L
     }
 
     @Override
-    public void onItemClick(String itemData) {
-        openDetails(itemData);
+    public void onItemClick(String itemId) {
+        openDetails(itemId);
     }
 
     private void openDetails(String itemData) {

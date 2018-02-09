@@ -80,7 +80,8 @@ public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.Episod
         public void onClick(View view) {
             int position = getAdapterPosition();
             data.moveToPosition(position);
-            mListener.onItemClick(data.toString());
+            Log.d("Adapter", "_id= " +data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry._ID)));
+            mListener.onItemClick(data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry._ID)));
         }
     }
 }
