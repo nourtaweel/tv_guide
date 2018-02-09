@@ -66,8 +66,11 @@ public class JSONUtils {
                 else{
                     episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_NETWORK_NAME, "");
                 }
-                String episodeShowImage = episodeShow.getJSONObject(KEY_EPISODE_SHOW_IMAGE).getString("medium");
-                episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_IMAGE, episodeShowImage);
+                if(!episodeShow.getString(KEY_EPISODE_SHOW_IMAGE).equals("null")){
+                    String episodeShowImage = episodeShow.getJSONObject(KEY_EPISODE_SHOW_IMAGE).getString("medium");
+                    episodesContentValuesArray[i].put(ScheduleContract.ScheduleEntry.COLUMN_IMAGE, episodeShowImage);
+                }
+
 
             }
         } catch (JSONException jsonExp){
