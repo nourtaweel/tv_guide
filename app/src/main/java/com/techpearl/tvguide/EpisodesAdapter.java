@@ -69,7 +69,6 @@ public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.Episod
             String image = data.getString(data.getColumnIndex(ScheduleContract.ScheduleEntry.COLUMN_IMAGE));
             mBinder.nameTextView.setText(name);
             mBinder.networkTextView.setText("\u2022" + networkName);
-            mBinder.numberTextView.setText(number);
             mBinder.timeTextView.setText(airTime);
             GlideApp.with(mBinder.getRoot())
                     .load(image)
